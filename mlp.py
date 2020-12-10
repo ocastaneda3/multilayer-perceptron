@@ -40,17 +40,16 @@ def read_file( file_name ):
 ##################################################
 class NeuralNetwork:
     def __init__( self, input_nodes, output_nodes, hidden_nodes ):
-        self.input_nodes = input_nodes       # 10 Input Nodes [0, . . ., 96]
-        self.hidden_nodes = hidden_nodes     # 12 Hidden Nodes
-        self.output_nodes = output_nodes     # 8 Output Node [0, . . ., 7]
+        self.input_nodes = input_nodes + 1      # 10 Input Nodes [0, . . ., 96] + 1 Bias Input
+        self.hidden_nodes = hidden_nodes + 1    # 12 Hidden Nodes + 1 Bias Node
+        self.output_nodes = output_nodes        # 8 Output Node [0, . . ., 7]
 
         self.learning_rate = 0.1
 
         # Weights for [ INPUT -> HIDDEN ]
         self.input_weights = np.array( np.random.uniform( LOWER, UPPER, size = (self.hidden_nodes, self.input_nodes) ) )
         # Weights for [ HIDDEN -> OUTPUT ]
-        self.output_weights = np.array( np.random.uniform( LOWER, UPPER, size = (self.output_nodes, self.hidden_nodes) ) )
-        print( self.output_weights )
+        self.output_weights = np.array( np.random.uniform( LOWER, UPPER, size = (self.output_nodes, self.hidden_nodes + 1) ) )
 
         # Bias for [ INPUT -> HIDDEN ]
         self.hidden_bias = np.array( np.random.uniform( LOWER, UPPER, size = (self.hidden_nodes, 1) ) )
@@ -66,28 +65,32 @@ class NeuralNetwork:
         # weight (dot) inputs = hidden
         inputs = np.array( x )
         inputs = inputs.reshape( len( x ), 1 )
+        inputs = np.vstack([inputs,  [[1]]] )
 
-        hidden = self.input_weights.dot( inputs ) + 1
-        # add bias  
-        # hidden = hidden + 1
+
+        hidden = self.input_weights.dot( inputs )
         # activation function
         hidden = sigmoid_function( hidden )
+        hidden = np.vstack([hidden,  [[1]]] )
 
         # Generate Outputs
         # -----------------------
         # weight (dot) hidden = output
-        output = self.output_weights.dot( hidden ) + 1
-        # add bias
-        # output = output 
-        # activation function
-        output = sigmoid_function( output )
+        outputs = self.output_weights.dot( hidden )
+        outputs = sigmoid_function( outputs )
 
         # Return List
-        return ( output.ravel().tolist(), hidden.ravel().tolist() )
+        return ( inputs, hidden, outputs )
+
+    def add_bias( self, x ):
+        inputs = x
+        inputs.append( 1 )
+
+        return np.array( x )
 
     def train( self, x, y ):
-        inputs = np.array( x )
-        inputs = inputs.reshape( len( x ), 1 )
+
+        sigmoid_derivative_function = np.vectorize( sigmoid_derivative )
 
         expected_outputs = [0] * ( self.output_nodes - 1 )
         expected_outputs.insert( y, 1 )
@@ -95,26 +98,35 @@ class NeuralNetwork:
         # Convert lists to matrix
         expected_outputs = np.array( expected_outputs ).reshape( self.output_nodes, 1)
 
-        guessed_output, hidden_outputs = self.feed_forward( x )
-
-        guessed_output = np.array( guessed_output ).reshape( self.output_nodes, 1)      # sigmoid already applied
-        hidden_outputs = np.array( hidden_outputs ).reshape( self.hidden_nodes, 1)      # sigmoid already applied
+        inputs, hidden_outputs, guess_outputs = self.feed_forward( x )
 
         # Calculate errors
-        output_errors = expected_outputs - guessed_output
+        output_errors = expected_outputs - guess_outputs
         hidden_errors = np.transpose( self.output_weights ).dot( output_errors )
 
+        # Calculate gradiant
+        gradiant = sigmoid_derivative_function( guess_outputs )
+        gradiant = np.multiply( output_errors, gradiant )
+        gradiant = np.multiply( self.learning_rate, gradiant )
+
+        output_deltas = gradiant.dot( np.transpose( hidden_outputs ) )
+
+        print( hidden_outputs.shape )
+        print( output_deltas.shape )
+
         # # Calculate hidden->output deltas
-        output_deltas = self.calc_deltas( hidden_outputs, guessed_output, output_errors )
+        # output_deltas = self.calc_deltas( hidden_outputs, guess_outputs, output_errors )
+        # output_deltas = self.calc_deltas( hidden_outputs, guess_outputs, output_errors )
 
         # # Maybe ???
         # np.add( self.output_weights, output_deltas )
 
         # # Calculate input->hidden deltas
-        hidden_deltas = self.calc_deltas( inputs, hidden_outputs, hidden_errors )
+        # hidden_deltas = self.calc_deltas( inputs, hidden_outputs, hidden_errors )
 
         # Return List
-        return ( output_deltas, hidden_deltas )
+        # return ( output_deltas, hidden_deltas )
+        return (1, 1)
 
     def test( self, x ):
         pass
@@ -144,11 +156,9 @@ def main():
 
     training_set, testing_set = train_test_split( input_sets, test_size = 0.20, shuffle = True )
     
-    n = NeuralNetwork( 10, 8, 12 )
+    n = NeuralNetwork( 10, 8, 11 )
 
-    # n.train( [17, 13, 74, 63, 78, 12, 22, 82, 55, 15], 5 )
-
-    for x in n.train( [17, 13, 74, 63, 78, 12, 22, 82, 55, 15], 5 ):
+    for x in n.train( [17, 13, 74, 63, 78, 12, 22, 82, 55, 15], 5):
         print( x )
 
 if __name__ == "__main__":
