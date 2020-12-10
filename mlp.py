@@ -67,18 +67,18 @@ class NeuralNetwork:
         inputs = np.array( x )
         inputs = inputs.reshape( len( x ), 1 )
 
-        hidden = self.input_weights.dot( inputs )
+        hidden = self.input_weights.dot( inputs ) + 1
         # add bias  
-        hidden = hidden + self.hidden_bias
+        # hidden = hidden + 1
         # activation function
         hidden = sigmoid_function( hidden )
 
         # Generate Outputs
         # -----------------------
         # weight (dot) hidden = output
-        output = self.output_weights.dot( hidden )
+        output = self.output_weights.dot( hidden ) + 1
         # add bias
-        output = output + self.output_bias
+        # output = output 
         # activation function
         output = sigmoid_function( output )
 
@@ -86,6 +86,9 @@ class NeuralNetwork:
         return ( output.ravel().tolist(), hidden.ravel().tolist() )
 
     def train( self, x, y ):
+        inputs = np.array( x )
+        inputs = inputs.reshape( len( x ), 1 )
+
         expected_outputs = [0] * ( self.output_nodes - 1 )
         expected_outputs.insert( y, 1 )
 
@@ -99,7 +102,7 @@ class NeuralNetwork:
 
         # Calculate errors
         output_errors = expected_outputs - guessed_output
-        # hidden_errors = np.transpose( self.output_weights ).dot( output_errors )
+        hidden_errors = np.transpose( self.output_weights ).dot( output_errors )
 
         # # Calculate hidden->output deltas
         output_deltas = self.calc_deltas( hidden_outputs, guessed_output, output_errors )
@@ -108,11 +111,10 @@ class NeuralNetwork:
         # np.add( self.output_weights, output_deltas )
 
         # # Calculate input->hidden deltas
-        # hidden_deltas = self.calc_deltas( np.array( x ), hidden_outputs, hidden_errors )
+        hidden_deltas = self.calc_deltas( inputs, hidden_outputs, hidden_errors )
 
         # Return List
-        # return ( output_deltas.ravel().tolist(), hidden_deltas.ravel().tolist() )
-        return ( np.add( self.output_weights, output_deltas ) )
+        return ( output_deltas, hidden_deltas )
 
     def test( self, x ):
         pass
