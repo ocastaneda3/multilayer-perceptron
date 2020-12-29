@@ -20,8 +20,6 @@ OUTPUT = 2
 # sigmoid( x )
 ##################################################
 def sigmoid( x ):
-    if x < 0:
-        return 1.0 - 1.0 / ( 1.0 + np.exp( -x ) )
     return 1.0 / ( 1.0 + np.exp( -x ) )
 
 ##################################################
@@ -68,118 +66,112 @@ def convert_output( old_data ):
     return new_data
 
 ##################################################
-# NeuralNetwork Class
+# NeuralNetwork
 ##################################################
 class NeuralNetwork:
     def __init__( self, input_nodes, hidden_nodes, output_nodes, learning_rate ):
-        self.input_nodes = input_nodes     # 10 Input Nodes [0, . . ., 96] + 1 Bias Input
-        self.hidden_nodes = hidden_nodes   # 11 Hidden Nodes + 1 Bias Node
+        self.input_nodes = input_nodes          # 10 Input Nodes [0, . . ., 96] + 1 Bias Input
+        self.hidden_nodes = hidden_nodes        # 11 Hidden Nodes + 1 Bias Node
         self.output_nodes = output_nodes        # 8 Output Node [0, . . ., 7]
+
+        # Weights for [ INPUT -> HIDDEN ]
+        self.input_weights = np.random.uniform( LOWER, UPPER, size = (self.hidden_nodes, self.input_nodes) )
+        # print(self.input_weights, '\n')
+
+        # Weights for [ HIDDEN -> OUTPUT ]
+        self.output_weights = np.random.uniform( LOWER, UPPER, size = (self.output_nodes, self.hidden_nodes) )
+        # print(self.output_weights, '\n')
+
+        # Bias for [ INPUT -> HIDDEN ]
+        self.hidden_bias = np.random.uniform( LOWER, UPPER, size = (self.hidden_nodes, 1) )
+
+        # Bias for [ HIDDEN -> OUTPUT ]
+        self.output_bias = np.random.uniform( LOWER, UPPER, size = (self.output_nodes, 1) )
 
         self.learning_rate = learning_rate
 
-        # Weights for [ INPUT -> HIDDEN ]
-        self.input_weights = np.array( np.random.uniform( LOWER, UPPER, size = (self.hidden_nodes, self.input_nodes + 1) ) )
-        # Weights for [ HIDDEN -> OUTPUT ]
-        self.output_weights = np.array( np.random.uniform( LOWER, UPPER, size = (self.output_nodes, self.hidden_nodes + 1) ) )
+        self.epoch = 0
 
-        # Bias for [ INPUT -> HIDDEN ]
-        self.hidden_bias = 1
-        # Bias for [ HIDDEN -> OUTPUT ]
-        self.output_bias = 1
+    def trained_output( self, x ):
+        return list( self.feed_forward( x )[OUTPUT].flatten() )
 
     def feed_forward( self, x ):
-        # Vectorized sigmoid function to take a numpy array as input and returns a numpy array as output
-        sigmoid_function = np.vectorize( sigmoid )
+        inputs = np.array( x ).reshape( len( x ), 1 )
 
-        inputs = np.array( x )
-        inputs = inputs.reshape( len( x ), 1 )
-        inputs = np.vstack([inputs, [[self.hidden_bias]]] )       # Add bias value
-       
-        # hidden = weight x inputs
-        hidden = self.input_weights.dot( inputs )
-    
-        # activation function
-        hidden = sigmoid_function( hidden )
-        hidden = np.vstack([hidden,  [[self.output_bias]]] )       # Add bias value
+        hidden = np.dot( self.input_weights, inputs )
+        hidden = np.add( hidden, self.hidden_bias )
 
-        # output = weight x hidden 
-        outputs = self.output_weights.dot( hidden )
-        # activation function
-        outputs = sigmoid_function( outputs )
+        # Activation Function
+        hidden = sigmoid( hidden )
 
-        # Return List
+        outputs = np.dot( self.output_weights, hidden )
+        outputs = np.add( outputs, self.output_bias )
+
+        # Activation Function
+        outputs = sigmoid( outputs )
+
         return ( inputs, hidden, outputs )
 
-    def train( self, x, targets ):
-        # Vectorized sigmoid derivative function to take a numpy array as input and returns a numpy array as output
-        sigmoid_derivative_function = np.vectorize( sigmoid_derivative )
-
-        # Feed-Forward
+    def train( self, x, y ):
         inputs, hidden, outputs = self.feed_forward( x )
 
-        # Calculate errors
-        output_error = np.array( targets ).reshape(len(targets), 1) - outputs
+        target = np.array( y ).reshape( len( y ), 1 )
+
+        # Calculate output error
+        output_error = np.subtract( target, outputs )
+
+        # Calculate hidden error
         hidden_error = np.dot( self.output_weights.T, output_error )
 
-        # Calculate output gradiant = [ lr * E * sigmoid'(outputs) ]
-        output_gradient = self.learning_rate * output_error * sigmoid_derivative_function( outputs )
+        # Calculate output gradient descent
+        output_gradient = self.learning_rate * output_error * sigmoid_derivative( outputs )
 
-        # Calculate hidden->output deltas
+        # Calculate output delta values
         output_deltas = np.dot( output_gradient, hidden.T )
 
-        # Adjust hidden->output weights by deltas
+        # Adjust output weight by calculated output deltas
         self.output_weights = np.add( self.output_weights, output_deltas )
 
-        # Remove row generated by bias. No effect when removed
-        hidden = np.delete( hidden, (len( hidden) - 1), axis = ROWS)
-        # Remove row generated by bias. No effect when removed
-        hidden_error = np.delete( hidden_error, (len( hidden_error) - 1), axis = ROWS)
+        # Adjust output bias by calculated output gradient calculated
+        self.output_bias = np.add( self.output_bias, output_gradient )
+        
+        # Calculate hidden gradient descent
+        hidden_gradient = self.learning_rate * hidden_error * sigmoid_derivative( hidden )
 
-        # Calculate hidden gradiant
-        hidden_gradient = self.learning_rate * hidden_error * sigmoid_derivative_function( hidden )
-
-        # Calculate input->hidden deltas
+        # Calculate hidden delta values
         hidden_deltas = np.dot( hidden_gradient, inputs.T )
 
-        # Adjust hidden->output weights by deltas
+        # Adjust input weights by the calculated hidden deltas
         self.input_weights = np.add( self.input_weights, hidden_deltas )
+
+        # Adjust hidden bias by calculated hidden gradient calculated
+        self.hidden_bias = np.add( self.hidden_bias, hidden_gradient )
+
+        # Track number of epochs during training phase
+        self.epoch += 1
 
 ##################################################
 # Main
 ##################################################
 def main():
-    training_set = convert_output( read_file( 'training_vectors.txt' ) )
-    testing_set = read_file( 'training_vectors.txt' )
+    n = NeuralNetwork( 2, 4, 1, 0.4 )
 
-    correct = 0
-    epochs = 22
+    data = [( [0, 0], [0] ),
+            ( [0, 1], [1] ),
+            ( [1, 0], [1] ),
+            ( [1, 1], [0] )]
 
-    n = NeuralNetwork( 10, 10, 8, 0.05 )
 
-    print( "Pre-Training [INPUT->HIDDEN] Weigths:", '\n', n.input_weights, '\n' )
-    print( "Pre-Training [HIDDEN->OUTPUT] Weigths:", '\n', n.output_weights, '\n' )
+    while any( output < 0.95 for output in n.trained_output( [0, 1] ) ):
+        training_data = random.choice( data )
+        n.train( training_data[0], training_data[1] )
 
-    print( "[ TRAINING . . . . ]" )
-    for _ in range( epochs ):
-        training_data = random.choice( training_set )
-        n.train( training_data[1], training_data[0] )
+    print( n.trained_output( [0, 0] ) )
+    print( n.trained_output( [0, 1] ) )
+    print( n.trained_output( [1, 0] ) )
+    print( n.trained_output( [1, 1] ) )
 
-    print( "Post-Training [INPUT->HIDDEN] Weigths:", '\n', n.input_weights, '\n' )
-    print( "Post-Training [HIDDEN->OUTPUT] Weigths:", '\n', n.output_weights, '\n\n' )
-
-    print( "Number of Epochs: ", epochs, '\n\n')
-
-    print( "[ GUESSING . . . . ]" )
-    for test_elm in testing_set:
-        guessed_results = n.feed_forward( test_elm[1] )[OUTPUT].flatten().tolist()
-        guess = guessed_results.index(max(guessed_results))
-
-        if guess is test_elm[0]:
-            correct += 1
-
-    print( "Guesses Percentage = ", (100 * float(correct)/float(len(testing_set))), "% Correct" )
-
+    print( "Epoch: ", n.epoch )
 
 if __name__ == "__main__":
     main()
