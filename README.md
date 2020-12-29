@@ -23,7 +23,6 @@
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
-[![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- TABLE OF CONTENTS -->
@@ -125,9 +124,9 @@ This is an example of how to list things you need to use the software and how to
 
 
 <!-- LICENSE -->
-## License
+<!-- ## License -->
 
-Distributed under the MIT License. See `LICENSE` for more information.
+<!-- Distributed under the MIT License. See `LICENSE` for more information. -->
 
 
 
@@ -159,8 +158,6 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [forks-url]: https://github.com/ocastaneda3/multilayer-perceptron/network/members
 [stars-shield]: https://img.shields.io/github/stars/ocastaneda3/multilayer-perceptron.svg?style=for-the-badge
 [stars-url]: https://github.com/ocastaneda3/multilayer-perceptron/stargazers
-[license-shield]: https://img.shields.io/github/license/ocastaneda3/multilayer-perceptron.svg?style=for-the-badge
-[license-url]: https://github.com/ocastaneda3/multilayer-perceptron/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/oscar-castaneda93/
 
