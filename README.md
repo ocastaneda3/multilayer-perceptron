@@ -23,7 +23,6 @@
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
@@ -60,7 +59,7 @@
 
 This project was part of an AI course I took and it had us build a Multi-Layer Perceptron (MLP) neural network with a backpropagation method of training. A single MLP is constructed with one hidden layer and one output layer. Using the a logistic activation function for calculating the gradient along with a user defined learning rate for the backpropagation. We were tasked with not using any outside ANN/MLP libraries/code for the project and in a sense doing it “from scratch”.
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![MLP Architecture][mlp-architecture](https://blog.goodaudience.com/artificial-neural-networks-explained-436fcf36e75)
 
 ### Built With
 
@@ -160,9 +159,11 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [forks-url]: https://github.com/ocastaneda3/multilayer-perceptron/network/members
 [stars-shield]: https://img.shields.io/github/stars/ocastaneda3/multilayer-perceptron.svg?style=for-the-badge
 [stars-url]: https://github.com/ocastaneda3/multilayer-perceptron/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ocastaneda3/multilayer-perceptron.svg?style=for-the-badge
-[issues-url]: https://github.com/ocastaneda3/multilayer-perceptron/issues
 [license-shield]: https://img.shields.io/github/license/ocastaneda3/multilayer-perceptron.svg?style=for-the-badge
 [license-url]: https://github.com/ocastaneda3/multilayer-perceptron/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/oscar-castaneda93/
+
+[mlp-architecture]: images/mlp_architecture.png
+[sigmoid-func]: images/sigmoid.PNG
+[sigmoid-derivative-func]: images/sigmoid_derivative.PNG
