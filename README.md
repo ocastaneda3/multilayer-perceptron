@@ -58,6 +58,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+This project was part of an AI course I took and it had us build a Multi-Layer Perceptron (MLP) neural network with a backpropagation method of training. A single MLP is constructed with one hidden layer and one output layer. Using the a logistic activation function for calculating the gradient along with a user defined learning rate for the backpropagation. We were tasked with not using any outside ANN/MLP libraries/code for the project and in a sense doing it “from scratch”.
+
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 ### Built With
