@@ -38,16 +38,9 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <!-- <li><a href="#usage">Usage</a></li> -->
-    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <!-- <li><a href="#contact">Contact</a></li> -->
-    <!-- <li><a href="#acknowledgements">Acknowledgements</a></li> -->
   </ol>
 </details>
 
@@ -58,14 +51,16 @@
 
 This project was part of an AI course I took and it had us build a Multi-Layer Perceptron (MLP) neural network with a backpropagation method of training. A single MLP is constructed with one hidden layer and one output layer. Using the a logistic activation function for calculating the gradient along with a user defined learning rate for the backpropagation. We were tasked with not using any outside ANN/MLP libraries/code for the project and in a sense doing it “from scratch”.
 
-![MLP Architecture][mlp-architecture](https://blog.goodaudience.com/artificial-neural-networks-explained-436fcf36e75)
+![MLP Architecture][mlp-architecture]*(Source: https://blog.goodaudience.com/artificial-neural-networks-explained-436fcf36e75)*
+
+First this MLP is designed and structured to solve the XOR problem. The feedforward algorithm takes the values from the input nodes which can either `0` or `1` and a bias value of `1`. Each input layer value is then multiplied with its corresponding weights to get nodes for the hidden layer. In this case I only implement one hidden layer, but the addition of other hidden layers would keep propagating forward until the output layer is reached. Next each hidden layer value not including the bias invokes an activation function, and for this project I use the sigmoid function which puts the sum of their input values to fall between `0` and `1`. The outputs of each hidden layer unit, including the bias unit, are then multiplied again but now with their respective weights to get the output layer value(s). The output value(s) also go through the activation function and returns a value falling between 0 and 1. This is the predicted output.
+
+To train the MLP a backpropagation algorithm implemented in order for it learn a good set of weight values. This is done by first comparing the output value(s) obtained from forward propagation and the expected output value(s) to calculate error values. With these errors we start moving backwards through the network calculating some delta values. These delta values calculated are slight tweaks that move the wights in a direction that reduces the size of the error by a small degree. Here another activation function is applied to -> [TODO . . .]
+
 
 ### Built With
 
 * [Python 3.9.0](https://www.python.org/downloads/release/python-390/)
-<!-- * []() -->
-<!-- * []() -->
-
 
 
 <!-- GETTING STARTED -->
@@ -73,81 +68,25 @@ This project was part of an AI course I took and it had us build a Multi-Layer P
 
 To get a local copy up and running follow these simple steps.
 
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
 ### Installation
 
 1. Clone the repo
    ```sh
    git clone https://github.com/github_username/repo_name.git
    ```
-2. Install NPM packages
+2. Install Python packages
    ```sh
-   npm install
+   pip3 install -r requirements.txt
    ```
-
-
-
-<!-- USAGE EXAMPLES -->
-<!-- ## Usage -->
-
-<!-- Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources. -->
-
-<!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
-
-
-
-<!-- ROADMAP -->
-<!-- ## Roadmap -->
-
-<!-- See the [open issues](https://github.com/github_username/repo_name/issues) for a list of proposed features (and known issues). -->
-
-
-
-<!-- CONTRIBUTING -->
-<!-- ## Contributing -->
-
-<!-- Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**. -->
-
-<!-- 1. Fork the Project -->
-<!-- 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`) -->
-<!-- 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`) -->
-<!-- 4. Push to the Branch (`git push origin feature/AmazingFeature`) -->
-<!-- 5. Open a Pull Request -->
-
-
-
-<!-- LICENSE -->
-<!-- ## License -->
-
-<!-- Distributed under the MIT License. See `LICENSE` for more information. -->
-
-
+3. Run
+  ```sh
+  python3 mlp.py
+  ```
 
 <!-- CONTACT -->
 ## Contact
 
-<!-- Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email -->
-
 Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-<!-- ## Acknowledgements -->
-
-<!-- * []() -->
-<!-- * []() -->
-<!-- * []() -->
-
-
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
